@@ -1,0 +1,8 @@
+{
+  "name": "vidhu-badri",
+  "version": "1.0.0",
+  "description": "Wedding gift registry",
+  "scripts": {
+    "vercel-build": "echo 'Static site - no build needed'"
+  }
+}
