@@ -103,14 +103,20 @@
       const name = input.value.trim();
       if (!name) return alert("Please enter your name!");
 
-      await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, name })
-      });
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id, name })
+        });
 
-      alert("Gift reserved! Refreshing list...");
-      loadGifts();
+        alert("Gift reserved! Refreshing list...");
+        loadGifts();
+      } catch (error) {
+        console.error("Error reserving gift:", error);
+        alert("Error reserving gift. Please try again.");
+      }
     }
 
     loadGifts();

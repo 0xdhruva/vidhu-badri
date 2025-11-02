@@ -1,5 +1,6 @@
 {
   "buildCommand": "npm run vercel-build",
   "outputDirectory": ".",
-  "public": true
+  "public": true,
+  "framework": null
 }
