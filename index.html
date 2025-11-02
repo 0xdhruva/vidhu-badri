@@ -106,13 +106,19 @@
       try {
         const res = await fetch(API_URL, {
           method: "POST",
-          mode: "no-cors",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id, name })
         });
 
-        alert("Gift reserved! Refreshing list...");
-        loadGifts();
+        const result = await res.json();
+        console.log("Reserve response:", result);
+
+        if (result.success) {
+          alert("Gift reserved! Refreshing list...");
+          loadGifts();
+        } else {
+          alert("Error: " + (result.error || "Failed to reserve gift"));
+        }
       } catch (error) {
         console.error("Error reserving gift:", error);
         alert("Error reserving gift. Please try again.");
