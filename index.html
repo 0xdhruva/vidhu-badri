@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wedding Registry</title>
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    background: #fafafa;
+    color: #333;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  h1 {
+    text-align: center;
+  }
+  .gift {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .gift h3 {
+    margin: 0 0 0.5rem 0;
+  }
+  a {
+    color: #0070f3;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  input {
+    padding: 0.5rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    box-sizing: border-box;
+  }
+  button {
+    background: #0070f3;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #0056b3;
+  }
+  .reserved {
+    background: #f0f0f0;
+    color: #777;
+  }
+</style>
+</head>
+<body>
+  <h1>Wedding Registry 🎁</h1>
+  <div id="gift-list">Loading...</div>
+
+  <script>
+    // 🔗 Replace with your Google Apps Script Web App URL
+    const API_URL = "https://script.google.com/macros/s/AKfycbzLONTjmt74W2K64OMg5j_8_s-KH-LzRi_yz4NTjT8PwBzqPD6HDkuoU7Sg_kAnNlCufQ/exec";
+
+    async function loadGifts() {
+      const res = await fetch(API_URL);
+      const gifts = await res.json();
+      const container = document.getElementById("gift-list");
+      container.innerHTML = "";
+
+      gifts.forEach(g => {
+        const giftDiv = document.createElement("div");
+        giftDiv.className = "gift";
+
+        // When reserved = TRUE, show who took it; else show input form
+        if (String(g.reserved).toLowerCase() === "true") {
+          giftDiv.classList.add("reserved");
+          giftDiv.innerHTML = `
+            <h3>${g.item}</h3>
+            <p>Price: ₹${g.price}</p>
+            <p><a href="${g.link}" target="_blank">View gift</a></p>
+            <p><b>Reserved by:</b> ${g.reserved_by || "Someone special 💝"}</p>
+          `;
+        } else {
+          giftDiv.innerHTML = `
+            <h3>${g.item}</h3>
+            <p>Price: ₹${g.price}</p>
+            <p><a href="${g.link}" target="_blank">View gift</a></p>
+            <input type="text" id="name-${g.id}" placeholder="Your name" />
+            <button onclick="reserveGift('${g.id}')">Reserve</button>
+          `;
+        }
+
+        container.appendChild(giftDiv);
+      });
+    }
+
+    async function reserveGift(id) {
+      const input = document.getElementById(`name-${id}`);
+      const name = input.value.trim();
+      if (!name) return alert("Please enter your name!");
+
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, name })
+      });
+
+      alert("Gift reserved! Refreshing list...");
+      loadGifts();
+    }
+
+    loadGifts();
+  </script>
+</body>
+</html>
